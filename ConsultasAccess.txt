@@ -1,0 +1,91 @@
+SELECT 
+    Pedido.IDPedido,
+    Cliente.Nome AS NomeCliente,
+    Estado.Nome AS EstadoPedido,
+    Loja.Nome AS NomeLoja
+FROM Estado 
+    INNER JOIN (Loja 
+    INNER JOIN (Cliente 
+    INNER JOIN Pedido ON Cliente.IDCliente = Pedido.IDCliente) 
+    ON Loja.IDLoja = Pedido.IDLoja) 
+    ON Estado.IDEstado = Pedido.IDEstado;
+
+SELECT 
+    TipoArranjo.Nome AS TipoArranjo,
+    Arranjo.Duracao,
+    Arranjo.Preco,
+    ArranjoPedido.Observacoes
+FROM TipoArranjo 
+    INNER JOIN (Arranjo 
+    INNER JOIN ArranjoPedido ON Arranjo.IDArranjo = ArranjoPedido.IDArranjo) 
+    ON TipoArranjo.IDTipoArranjo = Arranjo.IDTipoArranjo
+WHERE ArranjoPedido.IDPedido = [Insira o ID do Pedido];
+
+SELECT 
+    Artigo.Nome AS NomeArtigo,
+    ArranjoArtigo.Quantidade
+FROM Artigo 
+    INNER JOIN ArranjoArtigo ON Artigo.IDArtigo = ArranjoArtigo.IDArtigo
+WHERE ArranjoArtigo.IDArranjo = [Insira o ID do Arranjo];
+
+SELECT 
+    Cliente.Nome AS NomeCliente,
+    Pedido.Descricao,
+    Peca.Tipo,
+    Peca.Cor,
+    Peca.Tamanho,
+    Peca.Tecido
+FROM Cliente 
+    INNER JOIN (Pedido 
+    INNER JOIN (Peca 
+    INNER JOIN PecaPedido ON Peca.IDPeca = PecaPedido.IDPeca) 
+    ON Pedido.IDPedido = PecaPedido.IDPedido) 
+    ON Cliente.IDCliente = Pedido.IDCliente;
+
+SELECT 
+    Artigo.Nome AS NomeArtigo,
+    SUM(ArranjoArtigo.Quantidade) AS TotalUsado
+FROM Artigo 
+    INNER JOIN ArranjoArtigo ON Artigo.IDArtigo = ArranjoArtigo.IDArtigo
+GROUP BY Artigo.Nome;
+
+SELECT 
+    DocumentoVenda.IDDocumentoVenda,
+    Pedido.IDPedido,
+    Cliente.Nome,
+    Estado.Nome AS Estado
+FROM Cliente 
+    INNER JOIN (Pedido 
+    INNER JOIN (Estado 
+    INNER JOIN DocumentoVenda ON Estado.IDEstado = DocumentoVenda.IDEstado) 
+    ON Pedido.IDPedido = DocumentoVenda.IDPedido) 
+    ON Cliente.IDCliente = Pedido.IDCliente
+WHERE Estado.Nome <> 'Pago';
+
+SELECT 
+    DocumentoCompra.IDDocumentoCompra,
+    Artigo.Nome,
+    LinhasDocumentoCompra.Quantidade
+FROM DocumentoCompra 
+    INNER JOIN (Artigo 
+    INNER JOIN LinhasDocumentoCompra ON Artigo.IDArtigo = LinhasDocumentoCompra.IDArtigo) 
+    ON DocumentoCompra.IDDocumentoCompra = LinhasDocumentoCompra.IDDocumentoCompra
+WHERE DocumentoCompra.IDFornecedor = [Insira o ID do Fornecedor];
+
+SELECT 
+    Loja.Nome AS Loja,
+    Artigo.Nome AS Artigo,
+    SUM(ArranjoArtigo.Quantidade) AS TotalUsado
+FROM Loja 
+    INNER JOIN (Pedido 
+    INNER JOIN (ArranjoPedido 
+    INNER JOIN (ArranjoArtigo 
+    INNER JOIN Artigo ON ArranjoArtigo.IDArtigo = Artigo.IDArtigo) 
+    ON ArranjoPedido.IDArranjo = ArranjoArtigo.IDArranjo) 
+    ON Pedido.IDPedido = ArranjoPedido.IDPedido) 
+    ON Loja.IDLoja = Pedido.IDLoja
+GROUP BY Loja.Nome, Artigo.Nome;
+
+
+
+
